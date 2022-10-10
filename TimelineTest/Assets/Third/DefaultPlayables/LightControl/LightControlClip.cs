@@ -16,5 +16,6 @@ public class LightControlClip : PlayableAsset, ITimelineClipAsset
     public override Playable CreatePlayable (PlayableGraph graph, GameObject owner)
     {
         var playable = ScriptPlayable<LightControlBehaviour>.Create (graph, template);
-        return playable;    }
+        return playable;
+    }
 }
