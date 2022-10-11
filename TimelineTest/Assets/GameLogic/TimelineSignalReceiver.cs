@@ -13,7 +13,7 @@ namespace GameLogic
         #region methods
         public void OnTimelineFinish()
         {
-            Debug.Log("will fire timeline finishi event");
+            Debug.Log("will fire timeline finish event");
             TimelineFinishiEvent?.Invoke();
         }
         #endregion
