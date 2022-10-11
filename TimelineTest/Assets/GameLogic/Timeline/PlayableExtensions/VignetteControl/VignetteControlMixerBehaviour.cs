@@ -44,7 +44,6 @@ namespace GameLogic.Timeline.PlayableExtensions.VignetteControl
                 totalWeight += weight;
             }
             
-            Debug.Log(oldIntensity);
             vignette.intensity.SetValue(new ClampedFloatParameter(Mathf.Lerp(oldIntensity, blendedIntensity, totalWeight), 0.0f, 1f, true));
             base.ProcessFrame(playable, info, playerData);
         }
