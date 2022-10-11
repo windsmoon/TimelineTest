@@ -6,7 +6,7 @@ using UnityEngine.Rendering.RendererUtils;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.Timeline;
 
-namespace GameLogic.PlayableExtensions
+namespace GameLogic.Timeline.PlayableExtensions.VignetteControl
 {
     [Serializable]
     public class VignetteControlClip : PlayableAsset, ITimelineClipAsset
@@ -28,7 +28,7 @@ namespace GameLogic.PlayableExtensions
         {
             var playable = ScriptPlayable<VignetteControlBehaviour>.Create(graph);
             VignetteControlBehaviour volumeControlBehaviour = playable.GetBehaviour();
-            volumeControlBehaviour.Intensity = intensity;
+            volumeControlBehaviour.Intensity = intensity; 
             return playable;
         }
         #endregion

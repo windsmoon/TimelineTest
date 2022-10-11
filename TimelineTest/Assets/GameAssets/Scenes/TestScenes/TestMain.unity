@@ -3602,7 +3602,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 791340846}
-  m_LocalRotation: {x: 0.015250292, y: -0.69479495, z: 0.014739041, w: 0.71889514}
+  m_LocalRotation: {x: 0.014993699, y: -0.7075047, z: 0.015017358, w: 0.70639}
   m_LocalPosition: {x: 8.26, y: 1.94, z: 0.48}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -4829,7 +4829,7 @@ PlayableDirector:
   m_Enabled: 1
   serializedVersion: 3
   m_PlayableAsset: {fileID: 11400000, guid: 465fd773073cddb418ed233c8fc82ee7, type: 2}
-  m_InitialState: 1
+  m_InitialState: 0
   m_WrapMode: 2
   m_DirectorUpdateMode: 1
   m_InitialTime: 0

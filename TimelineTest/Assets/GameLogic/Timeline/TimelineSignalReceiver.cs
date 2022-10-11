@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace GameLogic
+namespace GameLogic.Timeline
 {
     public class TimelineSignalReceiver : MonoBehaviour
     {

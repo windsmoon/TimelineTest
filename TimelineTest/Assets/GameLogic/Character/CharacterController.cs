@@ -1,7 +1,6 @@
-﻿using System;
+﻿using GameLogic.Timeline;
 using GameLogic.Utils;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 namespace GameLogic.Character
 {

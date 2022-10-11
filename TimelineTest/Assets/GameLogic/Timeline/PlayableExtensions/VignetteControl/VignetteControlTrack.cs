@@ -3,7 +3,7 @@ using UnityEngine.Playables;
 using UnityEngine.Rendering;
 using UnityEngine.Timeline;
 
-namespace GameLogic.PlayableExtensions
+namespace GameLogic.Timeline.PlayableExtensions.VignetteControl
 {
     [TrackBindingType(typeof(Volume))]
     [TrackClipType(typeof(VignetteControlClip))]

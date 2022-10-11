@@ -4,7 +4,7 @@ using UnityEngine.Playables;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-namespace GameLogic.PlayableExtensions
+namespace GameLogic.Timeline.PlayableExtensions.VignetteControl
 {
     [Serializable]
     public class VignetteControlBehaviour : PlayableBehaviour

@@ -2,7 +2,7 @@
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-namespace GameLogic.PlayableExtensions
+namespace GameLogic.Timeline.PlayableExtensions.VignetteControl
 {
     public class VignetteControlMixerBehaviour : PlayableBehaviour
     {
