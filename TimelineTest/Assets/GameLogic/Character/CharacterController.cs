@@ -27,7 +27,7 @@ namespace GameLogic.Character
         #region methods
         private void OnTimelineFinish()
         {
-            Debug.Log("receive timeline finishi event");
+            Debug.Log("receive timeline finish event");
             animator.SetBool(AnimatorParameterIDReference.ReadyToFight, true);
         }
         #endregion

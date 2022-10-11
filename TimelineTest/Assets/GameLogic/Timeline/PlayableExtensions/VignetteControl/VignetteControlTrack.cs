@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Rendering;
 using UnityEngine.Timeline;
@@ -8,6 +9,7 @@ namespace GameLogic.Timeline.PlayableExtensions.VignetteControl
     [TrackBindingType(typeof(Volume))]
     [TrackClipType(typeof(VignetteControlClip))]
     [TrackColor(0.32f, 0.21f,0.55f)]
+    [Serializable]
     public class VignetteControlTrack : TrackAsset
     {
         #region methods

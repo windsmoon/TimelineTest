@@ -23,17 +23,17 @@ namespace GameLogic.Timeline.PlayableExtensions.VignetteControl
         #endregion
 
         #region methods
-        public override void ProcessFrame(Playable playable, FrameData info, object playerData)
-        {
-            Volume volume = playerData as Volume;
-
-            if (volume.profile.TryGet<Vignette>(out Vignette vignette))
-            {
-                vignette.intensity.SetValue(new ClampedFloatParameter(intensity, 0.0f, 1f, true));
-            }
-            
-            base.ProcessFrame(playable, info, playerData);
-        }
+        // public override void ProcessFrame(Playable playable, FrameData info, object playerData)
+        // {
+        //     Volume volume = playerData as Volume;
+        //
+        //     if (volume.profile.TryGet<Vignette>(out Vignette vignette))
+        //     {
+        //         vignette.intensity.SetValue(new ClampedFloatParameter(intensity, 0.0f, 1f, true));
+        //     }
+        //     
+        //     base.ProcessFrame(playable, info, playerData);
+        // }
         #endregion
     }
 }

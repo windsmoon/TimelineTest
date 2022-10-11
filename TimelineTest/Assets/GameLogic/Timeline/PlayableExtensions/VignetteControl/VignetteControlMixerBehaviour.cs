@@ -1,11 +1,19 @@
-﻿using UnityEngine.Playables;
+﻿using System;
+using UnityEngine;
+using UnityEngine.Playables;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
 namespace GameLogic.Timeline.PlayableExtensions.VignetteControl
 {
+    [Serializable]
     public class VignetteControlMixerBehaviour : PlayableBehaviour
     {
+        #region fields
+        private bool isFirstFrame = true;
+        private float oldIntensity;
+        #endregion
+        
         #region mehtods
         public override void ProcessFrame(Playable playable, FrameData info, object playerData)
         {
@@ -15,6 +23,12 @@ namespace GameLogic.Timeline.PlayableExtensions.VignetteControl
             {
                 base.ProcessFrame(playable, info, playerData);
                 return;
+            }
+            
+            if (isFirstFrame)
+            {
+                isFirstFrame = false;
+                oldIntensity = vignette.intensity.GetValue<float>();
             }
             
             int inputCount = playable.GetInputCount();
@@ -30,7 +44,8 @@ namespace GameLogic.Timeline.PlayableExtensions.VignetteControl
                 totalWeight += weight;
             }
             
-            vignette.intensity.SetValue(new ClampedFloatParameter(blendedIntensity, 0.0f, 1f, true));
+            Debug.Log(oldIntensity);
+            vignette.intensity.SetValue(new ClampedFloatParameter(Mathf.Lerp(oldIntensity, blendedIntensity, totalWeight), 0.0f, 1f, true));
             base.ProcessFrame(playable, info, playerData);
         }
         #endregion
