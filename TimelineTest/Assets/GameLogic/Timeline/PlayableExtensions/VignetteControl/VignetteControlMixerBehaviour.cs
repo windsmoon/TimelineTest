@@ -6,7 +6,6 @@ using UnityEngine.Rendering.Universal;
 
 namespace GameLogic.Timeline.PlayableExtensions.VignetteControl
 {
-    [Serializable]
     public class VignetteControlMixerBehaviour : PlayableBehaviour
     {
         #region fields

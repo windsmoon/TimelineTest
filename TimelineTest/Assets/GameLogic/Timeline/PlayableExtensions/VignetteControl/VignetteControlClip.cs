@@ -1,9 +1,6 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.Playables;
-using UnityEngine.Rendering;
-using UnityEngine.Rendering.RendererUtils;
-using UnityEngine.Rendering.Universal;
 using UnityEngine.Timeline;
 
 namespace GameLogic.Timeline.PlayableExtensions.VignetteControl

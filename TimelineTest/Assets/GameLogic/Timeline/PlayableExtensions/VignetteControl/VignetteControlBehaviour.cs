@@ -1,16 +1,12 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.Playables;
-using UnityEngine.Rendering;
-using UnityEngine.Rendering.Universal;
 
 namespace GameLogic.Timeline.PlayableExtensions.VignetteControl
 {
-    [Serializable]
     public class VignetteControlBehaviour : PlayableBehaviour
     {
         #region fields
-        [SerializeField]
         private float intensity;
         #endregion
 
