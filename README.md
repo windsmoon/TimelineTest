@@ -4,7 +4,9 @@
 
 下面的视频是 demo 效果，最开始是通过 timeline 控制动画和镜头等，最后横板准备战斗的动作是用代码切换的，这之后就直接切换到代码控制了。
 
-<video src="https://user-images.githubusercontent.com/29686189/195243121-3d402031-cdc6-4f4f-93e5-86a6e3fbeb68.mp4"></video>
+<video src="TimelineTest/Recordings/result.mp4"></video>
+
+
 
 # Timeline 的基本使用
 
@@ -89,6 +91,8 @@ Follow 物体上的虚拟相机的作用是，相机会跟随目标点，并保�
 + VignetteControlBehaviour ：该类需要继承自 PlayableBehaviour，表示 Clip 自己的行为，通过回调来执行具体的逻辑。
 + VignetteControlMixerBehaviour ：该类和 VignetteControlBehaviour  一样需要继承自 PlayableBehaviour，表示当多个 Clip 混合时的行为，但没有混合时，会变成只有某一个 Clip 或者一个都没有情况来混合，所以有了这个一般就不要再在 VignetteControlBehaviour 里执行同样的回调了，但依然要写它，因为它此时会作为一个数据类来使用。
 
+## VignetteControlTrack
+
 VignetteControlTrack 类代码如下：
 
 ``` C#
@@ -130,46 +134,7 @@ ScriptPlayable<VignetteControlMixerBehaviour>.Create(graph, inputCount);
 
 来创建。```ScriptPlayable<T>``` 继承自 Playable，可以先不用管 Playable 是什么，把他理解为一个图中的节点就可以，这行代码也会创建一个 VignetteControlMixerBehaviour 实例存在这个 Playable 对象里。我们先关注这几个类之间的关系，就可以先学会怎么自定义 Track 并且使用它了。 因为这里是创建一个 Mixer，所以泛型参数是 VignetteControlMixerBehaviour。
 
-VignetteControlClip 类代码如下：
-
-``` C#
-using System;
-using UnityEngine;
-using UnityEngine.Playables;
-using UnityEngine.Rendering;
-using UnityEngine.Rendering.RendererUtils;
-using UnityEngine.Rendering.Universal;
-using UnityEngine.Timeline;
-
-namespace GameLogic.Timeline.PlayableExtensions.VignetteControl
-{
-    [Serializable]
-    public class VignetteControlClip : PlayableAsset, ITimelineClipAsset
-    {
-        #region fields
-        [SerializeField, Range(0f, 1f)]
-        private float intensity;
-        #endregion
-        
-        #region properties
-        public ClipCaps clipCaps
-        {
-            get => ClipCaps.All;
-        }
-        #endregion
-
-        #region methods
-        public override Playable CreatePlayable(PlayableGraph graph, GameObject owner)
-        {
-            var playable = ScriptPlayable<VignetteControlBehaviour>.Create(graph);
-            VignetteControlBehaviour volumeControlBehaviour = playable.GetBehaviour();
-            volumeControlBehaviour.Intensity = intensity; 
-            return playable;
-        }
-        #endregion
-    }
-}
-```
+## VignetteControlClip
 
 VignetteControlClip 类代码如下：
 
@@ -225,6 +190,8 @@ Vignette Control Clip 这条线上面的都是通过 clipCaps 自动显示的，
 
 CreatePlayable 函数也是返回一个 Playable，但 Clip 函数中没有 Mixer 相关的操作，所以我们泛型参数传的是 VignetteControlBehaviour。但和创建 Mixer 不一样的是，我们要通过创建出来的 Playable 对象去取到其中的 VignetteControlBehaviour，然后将 intensity 字段的值传进去，后面会讲为什么这么做。
 
+## VignetteControlBehaviour
+
 VignetteControlBehaviour 类代码如下：
 
 ``` C#
@@ -270,6 +237,8 @@ PlayableBehaviour 顾名思义，在这里我们要执行具体的控制逻辑�
 在这个函数里，我们显然要获取后处理组件的引用，函数参数里的 playerData，就是 Track 上绑定的对象，所以将其转为 Volume 后，就可以获取 Vignette，然后修改其数据。**注意，修改 Volume 中的数据一定要用 SetValue，不要直接赋值，否则你会发现这时你再在后处理组件的面板上去改这个值就没效果了，必须把 Volume 的 profile 保存一下才可以，这对于开发来说是很麻烦的。**
 
 但我这里给注释掉了，因为我们有 Mixer，这个 Track 就不要在 VignetteControlBehaviour 中执行操作了。
+
+## VignetteControlMixerBehaviour
 
 VignetteControlMixerBehaviour 类的代码如下：
 
@@ -329,5 +298,230 @@ namespace GameLogic.Timeline.PlayableExtensions.VignetteControl
 
 这个类其实不需要任何字段，但是为了实现一些需求，我还是加了两个字段，一个是 isFirstFrame，表示是否是第一帧，第二个是 oldIntensity，这个其实就是把没有 Timeline 时的状态值记录了下来，以方便退出 Timeline 后还原，当然，你也可以选择不还原，这个要看具体需求。我们会在 ProcessFrame（MixerBehaviour 也是继承自 PlayableBehaviour）中判断是否是第一帧，是就把初始状态值记录下来。
 
-后面就是正常的混合逻辑了，虽然我们不用 VignetteControlBehaviour 来处理逻辑，但我们需要获取它来得到他们的值，然后才能混合。这里捋一下逻辑，每个 VignetteControlClip 会创建一个 VignetteControlBehaviour，而你要设置的数据是通过 VignetteControlClip 的 Inspector 面板设置的，我们在 VignetteControlClip 中把设置的值传递给了 VignetteControlBehaviour 对象，而在 VignetteControlMixerBehaviour 中，就要获取所有参与混合的 VignetteControlBehaviour，得到其中的数据，并通过权重混合出一个结果。
+后面就是正常的混合逻辑了，虽然我们不用 VignetteControlBehaviour 来处理逻辑，但我们需要获取它来得到他们的值，然后才能混合。这里捋一下逻辑，每个 VignetteControlClip 会创建一个 VignetteControlBehaviour，而你要设置的数据是通过 VignetteControlClip 的 Inspector 面板设置的，我们在 VignetteControlClip 中把设置的值传递给了 VignetteControlBehaviour 对象，而在 VignetteControlMixerBehaviour 中，就要获取所有参与混合的 VignetteControlBehaviour，得到其中的数据，并通过权重混合出一个结果。可以参照下图：
+
+![7](images/7.png)
+
+每一个 PlayableBehaviour 都是一个节点，每个节点的计算结果会输出到下一个节点。当没有 Mixer 的时候，VignetteControlBehaviour 的就直接连到输出节点了。当有 Mixer 的时候，VignetteControlMixerBehaviour 的节点的结果会输出到 Output 节点，但他的输入来自多个 VignetteControlBehaviour 节点，这样整个结构就清晰了。
+
+## 关于 PlayableBehaviour 回调的注意事项
+
+PlayableBehaviour 有很多回调，最常用的两个就是：
+
+``` C#
+public override void PrepareFrame(Playable playable, FrameData info)
+public override void ProcessFrame(Playable playable, FrameData info, object playerData)
+```
+
+PrepareFrame 在每帧的 PorcessFrame 之前执行。前面提到，有了 VignetteControlMixerBehaviour ，就不要在 VignetteControlBehaviour 中写 ProcessFrame 了，因为如果你创建了 Mixer 后，就要在其中写 ProcessFrame，而如果你这时还有 VignetteControlBehaviour 中的 ProcessFrame，那么两个 ProcessFrame 就都会执行，相当于重复执行代码了。除非你有特殊需求，否则就全在 Mixer 中执行就行。
+
+还有一个要注意的点，VignetteControlBehaviour  中的 ProcessFrame 只会在 Clip 对应的时间范围内执行，而 VignetteControlMixerBehaviour 中没有这个限制，会一直执行。所以如果 Timeline 执行到了混合区域，那么就会有 Mixer 的和几个非 Mixer 的代码一起执行。
+
+
+
+# 运行时绑定的相关操作和代码
+
+一般创建并编辑 TImeline 时，是在具体的 Scene 中操作的，这样你才能一边编辑一边看到结果，但 Timeline 本身是艺术资源，可能在不同的 Scene 和时间播放，并且我们希望制作完一份 Timeline 后，可以替换上面绑定的物体，以达到复用的目的，而且很多游戏的物体也是动态加载的，并不直接存在于 Scene 中。所以我们制作 Timeline 时要先在工程中创建 Timeline 资源，然后在 Scene 中找个地方引用他，再填入具体的绑定物体，这时才可以正常的编辑，等到运行时，我们用代码动态的替换绑定的物体，以满足我们的需求。
+
+下面讲一下如何实现这个需求。
+
+在我们的例子中，我们把绑定在 Timeline 中的 角色 Animator 和 SignalReceiver 从 Timeline 中移除，如下图所示：
+
+ ![8](images/8.png)
+
+Timeline 可以是动态加载也可以是直接拼在 Scene 中的，这个要看具体的情况，有些跟 Scene 绑定的 Timeline 也可以直接放在 Scene 中。我们写一个 GameManager 脚本挂在整个场景的根物体上，然后存储相关引用，用来在运行时把这些物体绑定上去，当然，也要引用 Scene 中的 TimelineDirector 组件，否则就无法引用到具体的 Timeline 资源了，如下图所示：
+
+![9](images/9.png)
+
+TimelineDirector 中存有 Timeline 资源的引用，还有一些相关的设置，注意要把 Play On Awake 勾掉，我们希望自己控制 Timeline 播放的时机，如下图所示：
+
+![10](images/10.png)
+
+注意看 CharacterAnimation 和 Signal Track 是空的，其余几个也可以选择动态绑定，但为了演示，只动态绑定这两个就足够了。
+
+我们在 GameManager 里的 Awake 中进行动态绑定，我们可能想直接用 Track 名字获取到绑定相关的引用，再进行赋值操作，但很遗憾并不能这么做，它虽然也是 key value 的形式，但是 key 是一个 UnityEngine.Object 对象，其名字是 Track 名字。然后我觉得这里的一个使用的坑就来了，当你创建新 Track 的时候，系统会自动给你分配一个不重复的名字，但你却可以手动改成一样的名字，这就导致无法直接用名字获取绑定的引用。
+
+那么能否使用索引呢？也不是不行，但是我自己手动输出了一下，除了自己设置的几个 Track，Unity 还会设置其他我们可能看不到的东西，比如 Markers，其实这个可以在编辑器中通过按钮来打开关闭，且也不知道是否还有别的设置，所以不是很建议。索引还有另一个问题，编辑调试的过程中，可能会调整 Track 的顺序，如果一旦忘记修改代码或者配置中关于索引的信息，就有可能出现 bug。综上所述，索引可能不好用。
+
+最终还是用了名字作为索引，因为创建新 Track 时自动分配的名字不会重复，而且你要动态设置某个 Track 的绑定，本身就可以本明确的去设置成含有具体语义的名字，而不是默认名字，这样你配表时也方便。至于重名问题，本身不同 Track 就是不同行为，你本来就应该加以区分。这时我们可以封装一个新的 TimelineBindingTool 类来做这个操作，然后再在 GameManager 中初始化它，之后就可以用名字作索引了。
+
+之所以要封装，是因为一个 Scene 可能需要很多个 Timeline，代码如下：
+
+``` C#
+using System.Collections.Generic;
+using UnityEngine.Playables;
+
+namespace GameLogic.Timeline
+{
+    public class TimelineBindingTool
+    {
+        #region fields
+        private Dictionary<string, PlayableBinding> playableBindingDict;
+        private PlayableDirector playableDirector;
+        #endregion
+
+        #region constructor
+        public TimelineBindingTool(PlayableDirector playableDirector)
+        {
+            this.playableDirector = playableDirector;
+            playableBindingDict = new Dictionary<string, PlayableBinding>();
+            
+            foreach (PlayableBinding playableBinding in playableDirector.playableAsset.outputs)
+            {
+                if (playableBindingDict.ContainsKey(playableBinding.streamName))
+                {
+                    continue;
+                }
+                
+                if (playableBinding.sourceObject != null)
+                {
+                    playableBindingDict.Add(playableBinding.streamName, playableBinding);        
+                }
+            }
+        }
+        #endregion
+
+        #region methods
+        public void BindObject(string key, UnityEngine.Object obj)
+        {
+            if (playableBindingDict.TryGetValue(key, out PlayableBinding playableBinding))
+            {
+                playableDirector.SetGenericBinding(playableBinding.sourceObject, obj);
+            }
+        }
+        #endregion
+    }
+}
+```
+
+构造函数就是传入 PlayableDirector 实例，然后解析其 Binding，没有物体的自然就不用了，把他们加入到一个字典中，后面就可以调用 BindObject 方法去绑定了。
+
+我们需要绑定的一个对象是 Animator 组件，实测你传 Animator 还是 其所在的 GameObject，都行。
+
+
+
+# Signal 的使用建议
+
+这里重点讲一下 Singal 的使用。前面说过，Signal Track 是用来向外加发出信号的，也就是事件，我们在 Signal Track 上可以添加 Signal Emitter，就会出现一个白点，这个白点可以挪动时间位置，点击它后 Inspector 面板如下显示：
+
+![11](images/11.png)
+
+点击 Emit Signal 下拉框会让你选择这个 Emitter 发的是哪个信号，也可以创建新的，保存到工程中。前面说过，这个信号是可以复用的资源，所以可以在任何 Timeline 中出现，且可以多次出现。我们这里创建了一个 TImelineFinish 信号，我们将它放到 Timeline 的末尾，这样当 Timeline 中执行到最后时，就会发出这个信号。
+
+现在我们还需要一个 SignalReceiver，用来接收信号。你仔细看就知道 Signal Track 所需要绑定的对象就是一个 Signal Receiver 组件，这个组件中需要设置每个 信号对应的处理函数，而这些函数是从 Signal Receiver 组件所在的 GameObject 上的其他组件中查找的，和内置的 Button 等行为一致，如下图所示：
+
+ ![12](images/12.png)
+
+这里我们设置了 TimelineFinish 的处理函数，是同一个物体上的自定义脚本 TimelineSignalReceiver 中的 OnTimelineFinish 方法。除此之外，也可以用代码设置，代码设置虽然更灵活，但由于 Signal 是个资源，所以绑定事件处理函数的时候还要加载这些资源，不是很方便。实际上，我建议用一个 TimelineSignal 接收整个游戏中的所有 Signal，然后直接在界面上选择 TimelineSignalReceiver 脚本中的函数去向外转发。
+
+因为一个 Timeline 中可能有很多个不同的 Signal Emitter，要用多个 Signal Track 就太麻烦了。所以我建议不要直接在 Signal Receiver 中写处理逻辑，只把它作为一个中转站，接收所有的信号，往外发 C# 事件，然后再由其他逻辑执行的地方监听处理。这样的好处一个是所有 Signal Track 都绑定这一个固定的 Signal Receiver，这样我们直接把这个 GameObject 做成一个 Prefab 就可以非常方便地实现动态绑定（因为这种全局事件监听的类必然是可以直接获取到的）；另一个好处是不管是原生 C# 部分还是 lua 等热更脚本部分，都可以只监听 TimelineSignalReceiver 中的事件即可。
+
+附上 TimelineSignalReceiver 的代码：
+
+``` C#
+using System;
+using UnityEngine;
+
+namespace GameLogic.Timeline
+{
+    public class TimelineSignalReceiver : MonoBehaviour
+    {
+        #region events
+        public static Action TimelineFinishEvent;
+        #endregion
+
+        #region methods
+        public void OnTimelineFinish()
+        {
+            Debug.Log("will fire timeline finish event");
+            TimelineFinishEvent?.Invoke();
+        }
+        #endregion
+    }
+}   
+
+```
+
+再附上 GameManager 的代码：
+
+``` C#
+using GameLogic.Timeline;
+using GameLogic.Timeline.PlayableExtensions.VignetteControl;
+using UnityEngine;
+using UnityEngine.Playables;
+using UnityEngine.Timeline;
+
+namespace GameLogic
+{
+    public class GameManager : MonoBehaviour
+    {
+        #region constants
+        public const string CharacterAnimation = "CharacterAnimation";
+        public const string SignalTrack = "Signal Track";
+        #endregion
+        
+        #region fields
+        [SerializeField]
+        private PlayableDirector playableDirector;
+        [SerializeField]
+        private GameObject character;
+        [SerializeField]
+        private SignalReceiver signalReceiver;
+        private TimelineBindingTool timelineBindingTool;
+        #endregion
+
+        #region unity methods
+        private void Awake()    
+        {
+            timelineBindingTool = new TimelineBindingTool(playableDirector);
+            timelineBindingTool.BindObject(CharacterAnimation, character.GetComponent<Animator>());
+            timelineBindingTool.BindObject(SignalTrack, signalReceiver);
+            playableDirector.Play();
+        }
+        #endregion
+    }
+}
+```
+
+在这个例子中，最后镜头切到横板并切换到准备战斗的动作，就是通过监听 TimelineFinish 这个 Signal，来实现状态机的切换：
+
+``` C#
+using GameLogic.Timeline;
+using GameLogic.Utils;
+using UnityEngine;
+
+namespace GameLogic.Character
+{
+    public class CharacterController : MonoBehaviour
+    {
+        #region fileds
+        private Animator animator;
+        #endregion
+        
+        #region unity methods
+        private void Awake()
+        {
+            animator = GetComponent<Animator>();
+            TimelineSignalReceiver.TimelineFinishEvent += OnTimelineFinish;
+        }
+
+        private void OnDestroy()
+        {
+            TimelineSignalReceiver.TimelineFinishEvent -= OnTimelineFinish;
+        }
+
+        #endregion
+
+        #region methods
+        private void OnTimelineFinish()
+        {
+            Debug.Log("receive timeline finish event");
+            animator.SetBool(AnimatorParameterIDReference.ReadyToFight, true);
+        }
+        #endregion
+    }
+}
+```
+
+
 

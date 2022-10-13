@@ -30,6 +30,12 @@ namespace GameLogic.Timeline.PlayableExtensions.VignetteControl
         //     
         //     base.ProcessFrame(playable, info, playerData);
         // }
+
+        public override void PrepareFrame(Playable playable, FrameData info)
+        {
+            base.PrepareFrame(playable, info);
+        }
+
         #endregion
     }
 }

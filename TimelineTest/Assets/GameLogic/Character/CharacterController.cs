@@ -14,12 +14,12 @@ namespace GameLogic.Character
         private void Awake()
         {
             animator = GetComponent<Animator>();
-            TimelineSignalReceiver.TimelineFinishiEvent += OnTimelineFinish;
+            TimelineSignalReceiver.TimelineFinishEvent += OnTimelineFinish;
         }
 
         private void OnDestroy()
         {
-            TimelineSignalReceiver.TimelineFinishiEvent -= OnTimelineFinish;
+            TimelineSignalReceiver.TimelineFinishEvent -= OnTimelineFinish;
         }
 
         #endregion
