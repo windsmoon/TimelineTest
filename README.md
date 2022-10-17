@@ -1,3 +1,7 @@
+
+
+# **本篇文章不作为教程使用，具体教程靠现场演示讲解，这篇文章只作为文档供查阅**用
+
 # TimelineTest
 
 这是一篇文档，用来讲解 Timeline 的相关操作和代码方面的使用，因项目需要，unity 版本为 2022.1.7f1c1。
@@ -5,8 +9,6 @@
 下面的视频是 demo 效果，最开始是通过 timeline 控制动画和镜头等，最后横板准备战斗的动作是用代码切换的，这之后就直接切换到代码控制了。
 
 <video src="TimelineTest/Recordings/result.mp4"></video>
-
-
 
 # Timeline 的基本使用
 
