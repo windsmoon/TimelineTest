@@ -8,7 +8,6 @@
 
 下面的视频是 demo 效果，最开始是通过 timeline 控制动画和镜头等，最后横板准备战斗的动作是用代码切换的，这之后就直接切换到代码控制了。
 
-<video src="TimelineTest/Recordings/result.mp4"></video>
 <video src="https://user-images.githubusercontent.com/29686189/195243121-3d402031-cdc6-4f4f-93e5-86a6e3fbeb68.mp4"></video>
 
 
@@ -16,7 +15,7 @@
 
 **Timeline 的使用方法主要还是依赖于视频讲解和现场演示，这里只做简单介绍。**一些操作和大部分此类工具都差不多，不赘述了。下面的 timeline 界面内容就是上面视频中的效果。
 
-![1](images/1.png)
+![1](https://raw.githubusercontent.com/windsmoon/TimelineTest/main/Images/1.png)
 
 上图是 Timeline 的大致界面：
 
@@ -34,7 +33,7 @@
 
 官方提供了几个 Track，点击加号按钮如下图所示：
 
-![2](images/2.png)
+![2](https://raw.githubusercontent.com/windsmoon/TimelineTest/main/Images/2.png)
 
 第一行 Track Group 是创建一个 Track 组，就相当于文件夹，用处就是分类，方便管理。
 
@@ -66,17 +65,17 @@
 
 Look 物体上的虚拟相机的作用是在固定点盯着某个东西，所以我们这个物体的位置挪到观察点，并且设置观察目标：
 
-![3](images/3.png)
+![3](https://raw.githubusercontent.com/windsmoon/TimelineTest/main/Images/3.png)
 
 上图中 Look At 变量里的 LookPoint 就是观察目标，当启用这个虚拟相机时，主相机上的 CinemachineBrain 组件就会将主相机的参数位置等数据设置为该虚拟相机的数据，并且一直在观察点看着观察目标。当观察目标移动时，相机也会旋转以保证一直看着观察目标（但不会移动位置）。
 
 Follow 物体上的虚拟相机的作用是，相机会跟随目标点，并保持一定的距离，所以当目标点走远时，相机也会移动位置跟上目标点：
 
-![4](images/4.png)
+![4](https://raw.githubusercontent.com/windsmoon/TimelineTest/main/Images/4.png)
 
 设置好 cinemachine 后，在 Timeline 中创建 Cinemachine Track，将主摄像机物体拖到其绑定变量上（因为这个 Track 需要绑定 CinemachineBrain），然后将两个有虚拟相机组件的物体拖到 Track 上，如下图所示
 
-![5](images/5.png)
+![5](https://raw.githubusercontent.com/windsmoon/TimelineTest/main/Images/5.png)
 
 当该 Timeline 开始运行时，整个 Track 完全由 Look 虚拟相机控制，这时，Track 上绑定的 CinemachineBrain 会启用 Look 虚拟相机的设置，表现就是游戏中主相机会在 Look 虚拟相机的位置看着 LookPoint。而当进入到中间浅色部分时，Look Clip 并没有结束，但是 Follow 已经开始了，这时两个 Clip 重叠，Cinemachine Track 会让这两个虚拟相机进行插值，表现上就是随着时间的进行，相机逐渐从 Look 虚拟相机的位置平滑移动到设置好的 Follow 相机经过计算应该出现的位置，之后 Look Clip 退出，结果完全交由 Follow 虚拟相机控制。这就是上面视频演示时镜头的行为，最后切换到横板视角时这里就不赘述了。
 
@@ -188,7 +187,7 @@ clipCaps 是因为实现了 ITimelineClipAsset 接口，这个用来在 Inspecto
 
 有了 intensity 和 clipCaps，现在点击一个 VignetteControlClip，右侧 Inspector 面板上会这样显示：
 
-![6](images/6.png)
+![6](https://raw.githubusercontent.com/windsmoon/TimelineTest/main/Images/6.png)
 
 Vignette Control Clip 这条线上面的都是通过 clipCaps 自动显示的，下面则是自己定义的要暴露的字段，可以看到这个变量因为我们设置了 [Range(0f, 1f)] 从而直接变成了一个滑块。
 
@@ -304,7 +303,7 @@ namespace GameLogic.Timeline.PlayableExtensions.VignetteControl
 
 后面就是正常的混合逻辑了，虽然我们不用 VignetteControlBehaviour 来处理逻辑，但我们需要获取它来得到他们的值，然后才能混合。这里捋一下逻辑，每个 VignetteControlClip 会创建一个 VignetteControlBehaviour，而你要设置的数据是通过 VignetteControlClip 的 Inspector 面板设置的，我们在 VignetteControlClip 中把设置的值传递给了 VignetteControlBehaviour 对象，而在 VignetteControlMixerBehaviour 中，就要获取所有参与混合的 VignetteControlBehaviour，得到其中的数据，并通过权重混合出一个结果。可以参照下图：
 
-![7](images/7.png)
+![7](https://raw.githubusercontent.com/windsmoon/TimelineTest/main/Images/7.png)
 
 每一个 PlayableBehaviour 都是一个节点，每个节点的计算结果会输出到下一个节点。当没有 Mixer 的时候，VignetteControlBehaviour 的就直接连到输出节点了。当有 Mixer 的时候，VignetteControlMixerBehaviour 的节点的结果会输出到 Output 节点，但他的输入来自多个 VignetteControlBehaviour 节点，这样整个结构就清晰了。
 
@@ -331,15 +330,15 @@ PrepareFrame 在每帧的 PorcessFrame 之前执行。前面提到，有了 Vign
 
 在我们的例子中，我们把绑定在 Timeline 中的 角色 Animator 和 SignalReceiver 从 Timeline 中移除，如下图所示：
 
- ![8](images/8.png)
+ ![8](https://raw.githubusercontent.com/windsmoon/TimelineTest/main/Images/8.png)
 
 Timeline 可以是动态加载也可以是直接拼在 Scene 中的，这个要看具体的情况，有些跟 Scene 绑定的 Timeline 也可以直接放在 Scene 中。我们写一个 GameManager 脚本挂在整个场景的根物体上，然后存储相关引用，用来在运行时把这些物体绑定上去，当然，也要引用 Scene 中的 TimelineDirector 组件，否则就无法引用到具体的 Timeline 资源了，如下图所示：
 
-![9](images/9.png)
+![9](https://raw.githubusercontent.com/windsmoon/TimelineTest/main/Images/9.png)
 
 TimelineDirector 中存有 Timeline 资源的引用，还有一些相关的设置，注意要把 Play On Awake 勾掉，我们希望自己控制 Timeline 播放的时机，如下图所示：
 
-![10](images/10.png)
+![10](https://raw.githubusercontent.com/windsmoon/TimelineTest/main/Images/10.png)
 
 注意看 CharacterAnimation 和 Signal Track 是空的，其余几个也可以选择动态绑定，但为了演示，只动态绑定这两个就足够了。
 
@@ -408,13 +407,13 @@ namespace GameLogic.Timeline
 
 这里重点讲一下 Singal 的使用。前面说过，Signal Track 是用来向外加发出信号的，也就是事件，我们在 Signal Track 上可以添加 Signal Emitter，就会出现一个白点，这个白点可以挪动时间位置，点击它后 Inspector 面板如下显示：
 
-![11](images/11.png)
+![11](https://raw.githubusercontent.com/windsmoon/TimelineTest/main/Images/11.png)
 
 点击 Emit Signal 下拉框会让你选择这个 Emitter 发的是哪个信号，也可以创建新的，保存到工程中。前面说过，这个信号是可以复用的资源，所以可以在任何 Timeline 中出现，且可以多次出现。我们这里创建了一个 TImelineFinish 信号，我们将它放到 Timeline 的末尾，这样当 Timeline 中执行到最后时，就会发出这个信号。
 
 现在我们还需要一个 SignalReceiver，用来接收信号。你仔细看就知道 Signal Track 所需要绑定的对象就是一个 Signal Receiver 组件，这个组件中需要设置每个 信号对应的处理函数，而这些函数是从 Signal Receiver 组件所在的 GameObject 上的其他组件中查找的，和内置的 Button 等行为一致，如下图所示：
 
- ![12](images/12.png)
+ ![12](https://raw.githubusercontent.com/windsmoon/TimelineTest/main/Images/12.png)
 
 这里我们设置了 TimelineFinish 的处理函数，是同一个物体上的自定义脚本 TimelineSignalReceiver 中的 OnTimelineFinish 方法。除此之外，也可以用代码设置，代码设置虽然更灵活，但由于 Signal 是个资源，所以绑定事件处理函数的时候还要加载这些资源，不是很方便。实际上，我建议用一个 TimelineSignal 接收整个游戏中的所有 Signal，然后直接在界面上选择 TimelineSignalReceiver 脚本中的函数去向外转发。
 
