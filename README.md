@@ -16,7 +16,7 @@
 
 **Timeline 的使用方法主要还是依赖于视频讲解和现场演示，这里只做简单介绍。**一些操作和大部分此类工具都差不多，不赘述了。下面的 timeline 界面内容就是上面视频中的效果。
 
-![1](images/1.png)
+![1](https://raw.githubusercontent.com/windsmoon/TimelineTest/main/Images/1.png)
 
 上图是 Timeline 的大致界面：
 
