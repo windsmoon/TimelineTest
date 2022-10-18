@@ -416,7 +416,13 @@ namespace GameLogic.Timeline
 
 这里我们设置了 TimelineFinish 的处理函数，是同一个物体上的自定义脚本 TimelineSignalReceiver 中的 OnTimelineFinish 方法。除此之外，也可以用代码设置，代码设置虽然更灵活，但由于 Signal 是个资源，所以绑定事件处理函数的时候还要加载这些资源，不是很方便。实际上，我建议用一个 TimelineSignal 接收整个游戏中的所有 Signal，然后直接在界面上选择 TimelineSignalReceiver 脚本中的函数去向外转发。
 
-因为一个 Timeline 中可能有很多个不同的 Signal Emitter，要用多个 Signal Track 就太麻烦了。所以我建议不要直接在 Signal Receiver 中写处理逻辑，只把它作为一个中转站，接收所有的信号，往外发 C# 事件，然后再由其他逻辑执行的地方监听处理。这样的好处一个是所有 Signal Track 都绑定这一个固定的 Signal Receiver，这样我们直接把这个 GameObject 做成一个 Prefab 就可以非常方便地实现动态绑定（因为这种全局事件监听的类必然是可以直接获取到的）；另一个好处是不管是原生 C# 部分还是 lua 等热更脚本部分，都可以只监听 TimelineSignalReceiver 中的事件即可。
+因为一个 Timeline 中可能有很多个不同的 Signal Emitter，要用多个 Signal Track 就太麻烦了。所以我建议不要直接在 Signal Receiver 中写处理逻辑，只把它作为一个中转站，接收所有的信号，往外发 C# 事件，然后再由其他逻辑执行的地方监听处理。这样的好处一个是我们直接把这个 有 Signal Receiver 和 TimelineSignalReceiver  脚本的 GameObject 做成一个 Prefab 就可以非常方便地实现动态绑，另一个好处是不管是原生 C# 部分还是 lua 等热更脚本部分，都可以只监听 TimelineSignalReceiver 中的事件即可。
+
+## 关于 Signal 传参数
+
+Signal 绑定的事件处理函数可以写一个参数，但是一个 Signal Receiver 中，每个 Signal 对应的参数是固定的，即你在 Track 中加了许多个 TImelineFinish 信号，且这个信号的监听函数也设置了参数，但只要绑定的是同一个 Signal Receiver，那么同一个所有 TImelineFinish 信号都是同样的参数，要想解决这个问题，只能新建轨道再绑定新的 Signal Receiver。 
+
+另外，添加 Signal 不一定要在 Signal Track，有些其他轨道右键也可以创建 Signal Emiiter。
 
 附上 TimelineSignalReceiver 的代码：
 
