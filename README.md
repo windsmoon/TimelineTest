@@ -9,6 +9,8 @@
 下面的视频是 demo 效果，最开始是通过 timeline 控制动画和镜头等，最后横板准备战斗的动作是用代码切换的，这之后就直接切换到代码控制了。
 
 <video src="TimelineTest/Recordings/result.mp4"></video>
+<video src="https://user-images.githubusercontent.com/29686189/195243121-3d402031-cdc6-4f4f-93e5-86a6e3fbeb68.mp4"></video>
+
 
 # Timeline 的基本使用
 
